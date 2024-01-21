@@ -49,7 +49,7 @@ public class YoutubeSearch {
                 HTTP_TRANSPORT,
                 JSON_FACTORY,
                createRequestInitializer()
-        ).setApplicationName("youtube-cmdline-search-sample").build();
+        ).setApplicationName("discord-musicbot").build();
     }
 
     private HttpRequestInitializer createRequestInitializer() {
