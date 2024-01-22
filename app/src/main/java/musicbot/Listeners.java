@@ -8,10 +8,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 
 public class Listeners extends ListenerAdapter {
-
-
-
-
     @Override
     public void onReady(@NotNull final ReadyEvent event) {
         final JDA jda = event.getJDA();

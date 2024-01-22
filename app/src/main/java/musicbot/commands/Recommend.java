@@ -60,7 +60,6 @@ public class Recommend extends ListenerAdapter {
 
             event.getHook().sendMessageEmbeds(embed).queue();
         }
-
     }
 
     private Optional<String> findArtistId(final OptionMapping artistInput) {
