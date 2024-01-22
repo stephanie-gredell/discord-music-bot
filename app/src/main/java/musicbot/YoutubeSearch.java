@@ -26,8 +26,6 @@ public class YoutubeSearch {
 
     private static final long NUMBER_VIDEOS_RETURNED = 1;
 
-    private static Properties _properties;
-
     private static YouTube _youtube;
 
     public String searchForMusic(final String title, final String artist) {
