@@ -1,18 +1,17 @@
 package musicbot.commands;
 
 import musicbot.SpotifyClient;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.utils.MiscUtil;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 import se.michaelthelin.spotify.model_objects.specification.Artist;
-import se.michaelthelin.spotify.model_objects.specification.Recommendations;
+import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Recommend extends ListenerAdapter {
@@ -21,18 +20,65 @@ public class Recommend extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
         if (!event.getName().equals("recommend")) return;
 
-        final String artist = Objects.requireNonNull(event.getOption("artist")).getAsString();
+        event.deferReply().queue();
+
+        final OptionMapping artistInput = event.getOption("artist");
+        final OptionMapping genreInput = event.getOption("genre");
+
+        final Optional<String> maybeArtistId = findArtistId(artistInput);
+        final Optional<String> maybeGenre = findGenre(genreInput);
+
         final SpotifyClient spotifyClient = new SpotifyClient();
-        final Optional<Artist> maybeArtist = spotifyClient.findArtist(artist);
 
-        if (maybeArtist.isPresent()) {
-            final String artistId = maybeArtist.get().getId();
-            final List<String> tracks = spotifyClient.findRecommendations(artistId).stream().map(track -> track.getName()).collect(Collectors.toList());
-            final String message = String.join(", ", tracks);/**/
+        final String artistId = maybeArtistId.orElse("");
+        final String genre = maybeGenre.orElse("");
+        final List<Track> tracks = spotifyClient.findRecommendations(artistId, genre);
 
-            event.reply(message).queue();
+        final EmbedBuilder eb = new EmbedBuilder();
+        if (!tracks.isEmpty()) {
+
+            eb
+                    .setTitle("Recommendations")
+                    .setDescription("Here are a list of recommendations based on your input. " +
+                            "It will help you find new music to listen to.");
+
+            tracks.forEach(track -> {
+                List<String> trackArtists = Arrays.stream(track.getArtists())
+                        .map(ArtistSimplified::getName)
+                        .collect(Collectors.toList());
+                String artists = String.join(", ", trackArtists);
+
+                eb.addField(track.getName(), artists, false);
+            });
+
+            MessageEmbed embed = eb.build();
+
+            event.getHook().sendMessageEmbeds(embed).queue();
         } else {
-            event.reply("Sorry, I can't find any recommendations.").queue();
+            eb.setTitle("No recommendations found");
+            final MessageEmbed embed = eb.build();
+
+            event.getHook().sendMessageEmbeds(embed).queue();
         }
+
+    }
+
+    private Optional<String> findArtistId(final OptionMapping artistInput) {
+        if (artistInput == null) {
+            return Optional.empty();
+        }
+
+        final SpotifyClient spotifyClient = new SpotifyClient();
+        final Optional<Artist> maybeArtist = spotifyClient.findArtist(artistInput.getAsString());
+
+        return maybeArtist.map(Artist::getId);
+    }
+
+    private Optional<String> findGenre(final OptionMapping genreInput) {
+        if (genreInput == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(genreInput.getAsString());
     }
 }
