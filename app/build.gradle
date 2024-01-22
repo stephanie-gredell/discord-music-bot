@@ -24,6 +24,7 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("net.dv8tion:JDA:5.0.0-alpha.19")
+    implementation 'se.michaelthelin.spotify:spotify-web-api-java:8.3.4'
 }
 
 task fatJar(type: Jar) {
