@@ -13,6 +13,8 @@ public class Listeners extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull final ReadyEvent event) {
+        //final Guild guildId = event.getJDA().getGuildById(1197770092243599431L);
+
         event.getJDA().upsertCommand("music", "find music to play").addOptions(
                 new OptionData(
                         OptionType.STRING,
@@ -24,6 +26,15 @@ public class Listeners extends ListenerAdapter {
                         "artist",
                         "The artist of the song",
                         true)
+        ).queue();
+
+        event.getJDA().upsertCommand("recommend", "find recommendations for music").addOptions(
+                new OptionData(
+                        OptionType.STRING,
+                        "artist",
+                        "The name of artist you like",
+                        true
+                )
         ).queue();
     }
 }

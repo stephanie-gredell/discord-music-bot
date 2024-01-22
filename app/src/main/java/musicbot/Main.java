@@ -1,6 +1,7 @@
 package musicbot;
 
 import musicbot.commands.MusicVideo;
+import musicbot.commands.Recommend;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
@@ -11,5 +12,6 @@ public class Main {
                 .build();
         jda.addEventListener(new Listeners());
         jda.addEventListener(new MusicVideo());
+        jda.addEventListener(new Recommend());
     }
 }
