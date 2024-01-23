@@ -1,15 +1,14 @@
 package musicbot.commands;
 
+import musicbot.MCommand;
 import musicbot.SpotifyClient;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.LayoutComponent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
-import org.jetbrains.annotations.NotNull;
 import se.michaelthelin.spotify.model_objects.specification.Artist;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.Track;
@@ -17,12 +16,36 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Recommend extends ListenerAdapter {
+public class Recommend implements MCommand {
 
   @Override
-  public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
-    if (!event.getName().equals("recommend")) return;
+  public String getName() {
+    return "recommend";
+  }
 
+  @Override
+  public String getDescription() {
+    return "find recommendations for music";
+  }
+
+  @Override
+  public List<OptionData> getOptions() {
+    final List<OptionData> options = new ArrayList<>();
+    options.add(new OptionData(
+        OptionType.STRING,
+        "artist",
+        "Find other songs and artists based on an artist you like"
+    ));
+    options.add(new OptionData(
+        OptionType.STRING,
+        "genre",
+        "Find other songs and artists based on a genre you like"
+    ));
+    return options;
+  }
+
+  @Override
+  public void execute(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
     final OptionMapping artistInput = event.getOption("artist");
@@ -47,10 +70,10 @@ public class Recommend extends ListenerAdapter {
           .setFooter("To find a song, select a button below.");
 
       tracks.forEach(track -> {
-        List<String> trackArtists = Arrays.stream(track.getArtists())
+        final List<String> trackArtists = Arrays.stream(track.getArtists())
             .map(ArtistSimplified::getName)
             .collect(Collectors.toList());
-        String artists = String.join(", ", trackArtists);
+        final String artists = String.join(", ", trackArtists);
 
         eb.addField(track.getName(), artists, false);
       });
