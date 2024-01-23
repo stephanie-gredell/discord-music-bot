@@ -3,6 +3,7 @@ package musicbot;
 import com.google.common.collect.ImmutableList;
 import org.apache.hc.core5.http.ParseException;
 import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.enums.ModelObjectType;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 import se.michaelthelin.spotify.model_objects.specification.Artist;
@@ -13,6 +14,7 @@ import se.michaelthelin.spotify.requests.authorization.client_credentials.Client
 import se.michaelthelin.spotify.requests.data.browse.GetRecommendationsRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import se.michaelthelin.spotify.requests.data.browse.miscellaneous.GetAvailableGenreSeedsRequest;
+import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequest;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -45,6 +47,18 @@ public class SpotifyClient {
             return Arrays.stream(artists.getItems()).findFirst();
         } catch (SpotifyWebApiException | ParseException | IOException exception) {
             return Optional.empty();
+        }
+    }
+
+    public List<Track> findTracks(final String query) {
+        try {
+            final SearchTracksRequest searchTracksRequest = SPOTIFY_API.searchTracks(query).limit(10).build();
+
+            final Paging<Track> tracks  = searchTracksRequest.execute();
+
+            return Arrays.stream(tracks.getItems()).collect(Collectors.toList());
+        } catch (SpotifyWebApiException | ParseException | IOException exception) {
+            return List.of();
         }
     }
 

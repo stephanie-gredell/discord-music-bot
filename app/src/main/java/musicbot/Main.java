@@ -1,5 +1,6 @@
 package musicbot;
 
+import musicbot.commands.Artist;
 import musicbot.commands.Genres;
 import musicbot.commands.MusicVideo;
 import musicbot.commands.Recommend;
@@ -15,5 +16,6 @@ public class Main {
         jda.addEventListener(new MusicVideo());
         jda.addEventListener(new Recommend());
         jda.addEventListener(new Genres());
+        jda.addEventListener(new Artist());
     }
 }

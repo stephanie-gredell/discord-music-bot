@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class Listeners extends ListenerAdapter {
     @Override
     public void onReady(@NotNull final ReadyEvent event) {
+        //final JDA jda = event.getJDA().getGuildById(1197770092243599431L).getJDA();
         final JDA jda = event.getJDA();
 
         jda.upsertCommand("music", "find music to play").addOptions(
@@ -39,7 +40,16 @@ public class Listeners extends ListenerAdapter {
                 )
         ).queue();
 
-        jda.upsertCommand("genres", "find recommendations for music").queue();
+        jda.upsertCommand("artist", "find songs by artist").addOptions(
+                new OptionData(
+                        OptionType.STRING,
+                        "name",
+                        "Find tracks by an artist.",
+                        true
+                )
+        ).queue();
+
+        jda.upsertCommand("genres", "find supported genres").queue();
     }
 
     @Override
