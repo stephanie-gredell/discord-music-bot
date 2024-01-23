@@ -14,28 +14,27 @@ import java.util.List;
 
 public class Artist extends ListenerAdapter {
 
-    @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        if (!event.getName().equals("artist")) return;
+  @Override
+  public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+    if (!event.getName().equals("artist")) return;
 
-        event.deferReply().queue();
+    event.deferReply().queue();
 
-        final String artist = event.getOption("name").getAsString();
-        System.out.print("hey!");
+    final String artist = event.getOption("name").getAsString();
 
-        final SpotifyClient spotifyClient = new SpotifyClient();
-        final List<Track> tracks = spotifyClient.findTracks("artist:"+artist);
+    final SpotifyClient spotifyClient = new SpotifyClient();
+    final List<Track> tracks = spotifyClient.findTracks("artist:" + artist);
 
-        final EmbedBuilder eb = new EmbedBuilder();
-        eb
-                .setTitle("Some tracks by " + artist);
+    final EmbedBuilder eb = new EmbedBuilder();
+    eb
+        .setTitle("Some tracks by " + artist);
 
-        tracks.forEach(track -> {
-            eb.addField(track.getName(), "", false);
-        });
+    tracks.forEach(track -> {
+      eb.addField(track.getName(), "", false);
+    });
 
-        final MessageEmbed embed = eb.build();
+    final MessageEmbed embed = eb.build();
 
-        event.getHook().sendMessageEmbeds(embed).queue();
-    }
+    event.getHook().sendMessageEmbeds(embed).queue();
+  }
 }
