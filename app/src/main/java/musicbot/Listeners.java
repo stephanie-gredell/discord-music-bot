@@ -2,6 +2,7 @@ package musicbot;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -39,5 +40,16 @@ public class Listeners extends ListenerAdapter {
         ).queue();
 
         jda.upsertCommand("genres", "find recommendations for music").queue();
+    }
+
+    @Override
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        final String artist = event.getComponent().getId();
+        final String title = event.getComponent().getLabel();
+
+        final YoutubeSearch youtubeSearch = new YoutubeSearch();
+        final String result = youtubeSearch.searchForMusic(title, artist);
+
+        event.reply(result).queue();
     }
 }

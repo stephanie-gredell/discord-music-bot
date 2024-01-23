@@ -6,6 +6,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.LayoutComponent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import org.jetbrains.annotations.NotNull;
 import se.michaelthelin.spotify.model_objects.specification.Artist;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
@@ -40,7 +43,8 @@ public class Recommend extends ListenerAdapter {
             eb
                     .setTitle("Recommendations")
                     .setDescription("Here are a list of recommendations based on your input. " +
-                            "It will help you find new music to listen to.");
+                            "It will help you find new music to listen to.")
+                            .setFooter("To find a song, select a button below.");
 
             tracks.forEach(track -> {
                 List<String> trackArtists = Arrays.stream(track.getArtists())
@@ -51,9 +55,12 @@ public class Recommend extends ListenerAdapter {
                 eb.addField(track.getName(), artists, false);
             });
 
-            MessageEmbed embed = eb.build();
+            final MessageEmbed embed = eb.build();
 
-            event.getHook().sendMessageEmbeds(embed).queue();
+            final List<Button> buttons = tracks.stream().map(track ->
+                    Button.primary(track.getName(), track.getName())).toList();
+
+            event.getHook().sendMessageEmbeds(embed).addActionRow(buttons).queue();
         } else {
             eb.setTitle("No recommendations found");
             final MessageEmbed embed = eb.build();
