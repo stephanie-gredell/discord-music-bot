@@ -2,7 +2,7 @@
 
 This is a basic Discord bot that will use the Youtube APi to find videos based on a song title and artist name.
 
-Note: You need to create a Token class with your own Discord Token and Youtube API Key.
+Note: You need to create a Token class with your own Discord Token, Youtube API Key and Spotify API client and secret.
 
 Sample: 
 
