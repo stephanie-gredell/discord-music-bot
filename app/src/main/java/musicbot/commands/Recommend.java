@@ -5,7 +5,6 @@ import musicbot.RecommendationService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -74,10 +73,8 @@ public class Recommend implements MCommand {
 
 
       final List<Button> buttons = trackList.stream().map(track -> {
-            final String artists = String.join(
-                ", ",
-                Arrays.stream(track.getArtists()).map(ArtistSimplified::getName)
-                    .collect(Collectors.toList()));
+            final String artists = Arrays.stream(track.getArtists()).map(ArtistSimplified::getName)
+                .collect(Collectors.joining(", "));
 
             return Button.primary("recommend_" + artists, track.getName());
       }).collect(Collectors.toList());

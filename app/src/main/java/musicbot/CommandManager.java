@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Extension of the Listener Adaptor that manages all the commands.
+ */
 public class CommandManager extends ListenerAdapter {
   private final List<MCommand> commands = new ArrayList<>();
 

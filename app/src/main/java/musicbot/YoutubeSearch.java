@@ -19,8 +19,6 @@ import java.util.Optional;
 import java.util.Properties;
 
 public class YoutubeSearch {
-  private static final String PROPERTIES_FILENAME = "youtube.properties";
-
   private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
   private static final JsonFactory JSON_FACTORY = new JacksonFactory();

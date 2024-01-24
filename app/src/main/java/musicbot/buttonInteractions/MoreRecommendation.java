@@ -13,6 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This interaction happens when a user requests more recommendations
+ * after initial /recommend.
+ */
 public class MoreRecommendation implements ButtonInteraction {
   private static final int INCREMENT = 5;
   private static final String ARGS_DELIMITER = "_";
