@@ -1,7 +1,7 @@
 package musicbot.commands;
 
 import musicbot.MCommand;
-import musicbot.SpotifyClient;
+import musicbot.RecommendationService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import se.michaelthelin.spotify.model_objects.specification.Artist;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
@@ -48,28 +47,21 @@ public class Recommend implements MCommand {
   public void execute(SlashCommandInteractionEvent event) {
     event.deferReply().queue();
 
-    final OptionMapping artistInput = event.getOption("artist");
-    final OptionMapping genreInput = event.getOption("genre");
+    final String artistInput = event.getOption("artist") != null ? event.getOption("artist").getAsString() : "";
+    final String genreInput = event.getOption("genre") != null ? event.getOption("genre").getAsString() : "";
 
-    final Optional<String> maybeArtistId = findArtistId(artistInput);
-    final Optional<String> maybeGenre = findGenre(genreInput);
-
-    final SpotifyClient spotifyClient = new SpotifyClient();
-
-    final String artistId = maybeArtistId.orElse("");
-    final String genre = maybeGenre.orElse("");
-    final List<Track> tracks = spotifyClient.findRecommendations(artistId, genre);
+    final List<Track> tracks = new RecommendationService().getRecommendations(artistInput, genreInput, 1);
 
     final EmbedBuilder eb = new EmbedBuilder();
-    if (!tracks.isEmpty()) {
-
+    final List<Track> trackList = tracks.subList(0, 5);
+    if (!trackList.isEmpty()) {
       eb
-          .setTitle("Recommendations")
+          .setTitle("Recommendations based on \"" + artistInput + "\"")
           .setDescription("Here are a list of recommendations based on your input. " +
               "It will help you find new music to listen to.")
           .setFooter("To find a song, select a button below.");
 
-      tracks.forEach(track -> {
+      trackList.forEach(track -> {
         final List<String> trackArtists = Arrays.stream(track.getArtists())
             .map(ArtistSimplified::getName)
             .collect(Collectors.toList());
@@ -80,34 +72,29 @@ public class Recommend implements MCommand {
 
       final MessageEmbed embed = eb.build();
 
-      final List<Button> buttons = tracks.stream().map(track ->
-          Button.primary(track.getName(), track.getName())).toList();
 
-      event.getHook().sendMessageEmbeds(embed).addActionRow(buttons).queue();
+      final List<Button> buttons = trackList.stream().map(track -> {
+            final String artists = String.join(
+                ", ",
+                Arrays.stream(track.getArtists()).map(ArtistSimplified::getName)
+                    .collect(Collectors.toList()));
+
+            return Button.primary("recommend_" + artists, track.getName());
+      }).collect(Collectors.toList());
+
+      final String buttonId = "more-recommend_" + artistInput + "--" + genreInput + "_" + "1";
+
+      event
+          .getHook()
+          .sendMessageEmbeds(embed)
+          .addActionRow(buttons)
+          .addActionRow(Button.secondary(buttonId, "Get more recommendations"))
+          .queue();
     } else {
       eb.setTitle("No recommendations found");
       final MessageEmbed embed = eb.build();
 
       event.getHook().sendMessageEmbeds(embed).queue();
     }
-  }
-
-  private Optional<String> findArtistId(final OptionMapping artistInput) {
-    if (artistInput == null) {
-      return Optional.empty();
-    }
-
-    final SpotifyClient spotifyClient = new SpotifyClient();
-    final Optional<Artist> maybeArtist = spotifyClient.findArtist(artistInput.getAsString());
-
-    return maybeArtist.map(Artist::getId);
-  }
-
-  private Optional<String> findGenre(final OptionMapping genreInput) {
-    if (genreInput == null) {
-      return Optional.empty();
-    }
-
-    return Optional.of(genreInput.getAsString());
   }
 }

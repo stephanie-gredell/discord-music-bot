@@ -35,9 +35,6 @@ public class YoutubeSearch {
     final List<SearchResult> searchResults = doSearch(title, artist);
 
     final Optional<SearchResult> maybeResult = searchResults.stream().findFirst();
-    searchResults.stream().forEach(result -> {
-      System.out.println("result ID = " + result.getId());
-    });
 
     return maybeResult.map(result -> "http://www.youtube.com/watch?v=" + result.getId().getVideoId())
         .orElse("No videos found.");

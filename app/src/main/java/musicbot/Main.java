@@ -17,5 +17,6 @@ public class Main {
     manager.add(new MusicVideo());
     manager.add(new Recommend());
     jda.addEventListener(manager);
+    jda.addEventListener(new Listeners());
   }
 }

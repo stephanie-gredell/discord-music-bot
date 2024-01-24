@@ -52,7 +52,7 @@ public class SpotifyClient {
 
   public List<Track> findTracks(final String query) {
     try {
-      final SearchTracksRequest searchTracksRequest = SPOTIFY_API.searchTracks(query).limit(10).build();
+      final SearchTracksRequest searchTracksRequest = SPOTIFY_API.searchTracks(query).build();
 
       final Paging<Track> tracks = searchTracksRequest.execute();
 
@@ -63,8 +63,7 @@ public class SpotifyClient {
   }
 
   public List<Track> findRecommendations(final String artistId, final String genres) {
-    final GetRecommendationsRequest.Builder recommendationsRequestBuilder = SPOTIFY_API.getRecommendations()
-        .limit(5);
+    final GetRecommendationsRequest.Builder recommendationsRequestBuilder = SPOTIFY_API.getRecommendations();
 
     if (!artistId.isEmpty()) {
       recommendationsRequestBuilder
@@ -80,7 +79,6 @@ public class SpotifyClient {
 
     try {
       final Recommendations recommendations = recommendationsRequest.execute();
-      System.out.println("Length: " + recommendations.getTracks().length);
 
       return Arrays.stream(recommendations.getTracks()).collect(Collectors.toList());
     } catch (IOException | SpotifyWebApiException | ParseException e) {

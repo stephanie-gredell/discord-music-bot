@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,17 +34,16 @@ public class Genres implements MCommand {
 
   @Override
   public void execute(SlashCommandInteractionEvent event) {
+    event.deferReply().queue();
     final SpotifyClient spotifyClient = new SpotifyClient();
     final List<String> genres = spotifyClient.findGenres();
 
-    final List<List<String>> batches = Lists.partition(genres, 20);
+    final EmbedBuilder eb = new EmbedBuilder();
 
-    final List<MessageEmbed> embeds = batches.stream().map(genresList -> {
-      final EmbedBuilder eb = new EmbedBuilder();
-      genresList.forEach(genre -> eb.addField(genre, "", false));
-      return eb.build();
-    }).collect(Collectors.toList());
+    genres.subList(0, 10).forEach(genre -> eb.addField(genre, "", false));
 
-    event.getChannel().sendMessageEmbeds(embeds).queue();
+    event.getHook().sendMessageEmbeds(eb.build()).addActionRow(
+        Button.primary("genre_1", "More")
+    ).queue();
   }
 }
