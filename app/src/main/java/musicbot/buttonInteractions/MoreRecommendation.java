@@ -30,6 +30,7 @@ public class MoreRecommendation implements ButtonInteraction {
 
   @Override
   public void execute(final ButtonInteractionEvent event) {
+    event.deferReply().queue();
     final String id = event.getComponent().getId();
     final String[] args = id.split(ARGS_DELIMITER);
     final String[] artistGenre = args[1].split(ARTIST_GENRE_DELIMITER);
