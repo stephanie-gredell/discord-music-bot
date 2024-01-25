@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class SpotifyClient {
@@ -56,7 +57,7 @@ public class SpotifyClient {
 
       final Paging<Track> tracks = searchTracksRequest.execute();
 
-      return Arrays.stream(tracks.getItems()).collect(Collectors.toList());
+      return Arrays.stream(tracks.getItems()).collect(ImmutableList.toImmutableList());
     } catch (SpotifyWebApiException | ParseException | IOException exception) {
       return List.of();
     }
@@ -80,7 +81,7 @@ public class SpotifyClient {
     try {
       final Recommendations recommendations = recommendationsRequest.execute();
 
-      return Arrays.stream(recommendations.getTracks()).collect(Collectors.toList());
+      return Arrays.stream(recommendations.getTracks()).collect(ImmutableList.toImmutableList());
     } catch (IOException | SpotifyWebApiException | ParseException e) {
       System.out.println("Error: " + e.getMessage());
       return ImmutableList.of();
@@ -92,7 +93,7 @@ public class SpotifyClient {
 
     try {
       final String[] genres = request.execute();
-      return Arrays.stream(genres).collect(Collectors.toList());
+      return Arrays.stream(genres).collect(ImmutableList.toImmutableList());
     } catch (IOException | SpotifyWebApiException | ParseException e) {
       System.out.println("Error: " + e.getMessage());
       return ImmutableList.of();

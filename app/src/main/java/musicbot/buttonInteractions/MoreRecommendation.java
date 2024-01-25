@@ -1,5 +1,6 @@
 package musicbot.buttonInteractions;
 
+import com.google.common.collect.ImmutableList;
 import musicbot.ButtonInteraction;
 import musicbot.Paginator;
 import musicbot.RecommendationService;
@@ -54,7 +55,7 @@ public class MoreRecommendation implements ButtonInteraction {
       trackList.forEach(track -> {
         final List<String> trackArtists = Arrays.stream(track.getArtists())
             .map(ArtistSimplified::getName)
-            .collect(Collectors.toList());
+            .collect(ImmutableList.toImmutableList());
         final String artists = String.join(", ", trackArtists);
 
         eb.addField(track.getName(), artists, false);
@@ -67,7 +68,7 @@ public class MoreRecommendation implements ButtonInteraction {
             .collect(Collectors.joining(", "));
 
         return Button.primary("recommend_" + artists, track.getName());
-      }).collect(Collectors.toList());
+      }).collect(ImmutableList.toImmutableList());
 
       if (!paginatedTracks.isIsLastPage()) {
         final String buttonId = "more-recommend_" + artist + "--" + genre + "_" + paginatedTracks.getNextPageNum();
