@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class RecommendationService {
 
-  public List<Track> getRecommendations(final String artist, final String genre, final int page) {
+  public List<Track> getRecommendations(final String artist, final String genre) {
 
     if (artist.isEmpty() && genre.isEmpty()) {
       return ImmutableList.of();

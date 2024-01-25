@@ -1,6 +1,7 @@
 package musicbot.commands;
 
 import musicbot.MCommand;
+import musicbot.Paginator;
 import musicbot.RecommendationService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -48,11 +49,12 @@ public class Recommend implements MCommand {
 
     final String artistInput = event.getOption("artist") != null ? event.getOption("artist").getAsString() : "";
     final String genreInput = event.getOption("genre") != null ? event.getOption("genre").getAsString() : "";
-
-    final List<Track> tracks = new RecommendationService().getRecommendations(artistInput, genreInput, 1);
-
+    final List<Track> tracks = new RecommendationService().getRecommendations(artistInput, genreInput);
+    final Paginator paginator = new Paginator();
+    final Paginator.PaginatedItems<Track> paginatedTracks = paginator.paginate(tracks, 5, 1);
     final EmbedBuilder eb = new EmbedBuilder();
-    final List<Track> trackList = tracks.subList(0, 5);
+    final List<Track> trackList = paginatedTracks.get();
+
     if (!trackList.isEmpty()) {
       eb
           .setTitle("Recommendations based on \"" + artistInput + "\"")
@@ -70,16 +72,14 @@ public class Recommend implements MCommand {
       });
 
       final MessageEmbed embed = eb.build();
-
-
       final List<Button> buttons = trackList.stream().map(track -> {
-            final String artists = Arrays.stream(track.getArtists()).map(ArtistSimplified::getName)
-                .collect(Collectors.joining(", "));
+        final String artists = Arrays.stream(track.getArtists()).map(ArtistSimplified::getName)
+            .collect(Collectors.joining(", "));
 
-            return Button.primary("recommend_" + artists, track.getName());
+        return Button.primary("recommend_" + artists, track.getName());
       }).collect(Collectors.toList());
 
-      final String buttonId = "more-recommend_" + artistInput + "--" + genreInput + "_" + "1";
+      final String buttonId = "more-recommend_" + artistInput + "--" + genreInput + "_" + paginatedTracks.getNextPageNum();
 
       event
           .getHook()

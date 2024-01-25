@@ -1,6 +1,7 @@
 package musicbot.buttonInteractions;
 
 import musicbot.ButtonInteraction;
+import musicbot.Paginator;
 import musicbot.RecommendationService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -21,7 +22,6 @@ public class MoreRecommendation implements ButtonInteraction {
   private static final int INCREMENT = 5;
   private static final String ARGS_DELIMITER = "_";
   private static final String ARTIST_GENRE_DELIMITER = "--";
-  private static final int NUM_RECOMMENDATIONS = 5;
 
   @Override
   public String getName() {
@@ -33,20 +33,19 @@ public class MoreRecommendation implements ButtonInteraction {
     event.deferReply().queue();
     final String id = event.getComponent().getId();
     final String[] args = id.split(ARGS_DELIMITER);
+
     final String[] artistGenre = args[1].split(ARTIST_GENRE_DELIMITER);
     final String artist = artistGenre[0];
     final String genre = artistGenre.length < 2 ? "" : artistGenre[1];
-    final int page = Integer.parseInt(args[2]);
-    final int nextPage = page + 1;
-    final int maxIndex = INCREMENT * page;
-    final int baseIndex = maxIndex - INCREMENT;
 
-    final List<Track> tracks = new RecommendationService().getRecommendations(artist, genre, page);
-    final int maxSize = tracks.size();
-    final int maxPage = (int) Math.floor(maxSize / NUM_RECOMMENDATIONS);
+    final int pageNumber = Integer.parseInt(args[2]);
+    final List<Track> tracks = new RecommendationService().getRecommendations(artist, genre);
+
+    final Paginator paginator = new Paginator();
+    final Paginator.PaginatedItems<Track> paginatedTracks = paginator.paginate(tracks, 5, pageNumber);
 
     final EmbedBuilder eb = new EmbedBuilder();
-    final List<Track> trackList = tracks.subList(baseIndex, maxIndex);
+    final List<Track> trackList = paginatedTracks.get();
     if (!trackList.isEmpty()) {
       eb
           .setTitle("More recommendations based on \"" + artist + "\"")
@@ -70,8 +69,8 @@ public class MoreRecommendation implements ButtonInteraction {
         return Button.primary("recommend_" + artists, track.getName());
       }).collect(Collectors.toList());
 
-      if (nextPage <= maxPage) {
-        final String buttonId = "more-recommend_" + artist + "--" + genre + "_" + nextPage;
+      if (!paginatedTracks.isIsLastPage()) {
+        final String buttonId = "more-recommend_" + artist + "--" + genre + "_" + paginatedTracks.getNextPageNum();
 
         event
             .getHook()
