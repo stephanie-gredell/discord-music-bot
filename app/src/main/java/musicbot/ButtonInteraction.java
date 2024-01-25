@@ -14,7 +14,7 @@ public interface ButtonInteraction {
 
   /**
    * Executes the interaction logic of the button
-   * @param event
+   * @param event the ButtonInteractionEvent
    */
   void execute(ButtonInteractionEvent event);
 }

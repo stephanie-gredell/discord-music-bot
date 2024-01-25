@@ -15,7 +15,7 @@ public class VideoRecommendation implements ButtonInteraction {
   public void execute(ButtonInteractionEvent event) {
     final String id = event.getComponent().getId();
     final String label = event.getComponent().getLabel();
-    final String[] args = id.split("_");
+    final String[] args = id.split("_", 0);
 
     event.deferReply().queue();
 

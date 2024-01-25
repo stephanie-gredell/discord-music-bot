@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
  * after initial /recommend.
  */
 public class MoreRecommendation implements ButtonInteraction {
-  private static final int INCREMENT = 5;
   private static final String ARGS_DELIMITER = "_";
   private static final String ARTIST_GENRE_DELIMITER = "--";
 
@@ -33,9 +32,9 @@ public class MoreRecommendation implements ButtonInteraction {
   public void execute(final ButtonInteractionEvent event) {
     event.deferReply().queue();
     final String id = event.getComponent().getId();
-    final String[] args = id.split(ARGS_DELIMITER);
+    final String[] args = id.split(ARGS_DELIMITER, 0);
 
-    final String[] artistGenre = args[1].split(ARTIST_GENRE_DELIMITER);
+    final String[] artistGenre = args[1].split(ARTIST_GENRE_DELIMITER, 0);
     final String artist = artistGenre[0];
     final String genre = artistGenre.length < 2 ? "" : artistGenre[1];
 

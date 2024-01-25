@@ -20,7 +20,7 @@ public class MoreGenre implements ButtonInteraction {
     final String id = event.getComponent().getId();
     final Paginator paginator = new Paginator();
 
-    final String[] args = id.split("_");
+    final String[] args = id.split("_", 0);
     event.deferReply().queue();
 
     final int page = Integer.parseInt(args[1]);

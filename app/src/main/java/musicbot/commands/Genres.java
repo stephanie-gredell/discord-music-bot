@@ -1,23 +1,16 @@
 package musicbot.commands;
 
-import com.google.common.collect.Lists;
 import musicbot.MCommand;
 import musicbot.Paginator;
 import musicbot.SpotifyClient;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Genres implements MCommand {
-
   @Override
   public String getName() {
     return "genres";

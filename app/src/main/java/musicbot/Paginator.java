@@ -45,7 +45,7 @@ public class Paginator {
     }
 
     final int maxSize = tracks.size();
-    final int maxPage = (int) Math.floor(maxSize / numItemsPerPage);
+    final int maxPage = Math.round(maxSize / ((float) numItemsPerPage));
     final int maxIndex = numItemsPerPage * pageNumber;
     final int baseIndex = maxIndex - numItemsPerPage;
     final int nextPage = pageNumber + 1;

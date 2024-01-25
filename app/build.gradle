@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id("net.ltgt.errorprone") version "3.1.0"
 }
 
 repositories {
@@ -17,6 +18,7 @@ repositories {
 }
 
 dependencies {
+    errorprone("com.google.errorprone:error_prone_core:2.24.1")
     implementation 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
 
     // Use JUnit test framework.
@@ -28,22 +30,8 @@ dependencies {
     implementation("com.google.guava:guava:33.0.0-jre")
 }
 
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Main-Class': 'Main'
-    }
-
-    from {
-        configurations.compile.collect {
-            dependency ->
-                if (dependency.directory) {
-                    return dependency
-                } else {
-                    return zipTree(dependency)
-                }
-        }
-    }
-    with jar
+tasks.withType(JavaCompile).configureEach {
+    options.errorprone.disableWarningsInGeneratedCode.set(false)
 }
 
 application {

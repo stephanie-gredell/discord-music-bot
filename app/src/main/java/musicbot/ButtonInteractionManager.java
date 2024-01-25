@@ -23,7 +23,7 @@ public class ButtonInteractionManager extends ListenerAdapter {
   public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
     final String id = event.getComponent().getId();
 
-    final String[] args = id.split("_");
+    final String[] args = id.split("_", 0);
 
     for (final ButtonInteraction buttonInteraction : buttonInteractions) {
       if (args[0].equals(buttonInteraction.getName())) {

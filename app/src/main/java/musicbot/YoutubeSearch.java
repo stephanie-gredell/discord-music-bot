@@ -48,6 +48,7 @@ public class YoutubeSearch {
 
   private HttpRequestInitializer createRequestInitializer() {
     final HttpRequestInitializer initializer = new HttpRequestInitializer() {
+      @Override
       public void initialize(HttpRequest request) throws IOException {
       }
     };
